@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { MAPUTO_LOCATIONS } from '../data/mockData';
-import type { LocationPoint, RideOption, PaymentMethod } from '../types';
+import type { LocationPoint, RideOption, PaymentMethod, RideRequest } from '../types';
 import { MapView } from './MapView';
 import { MpesaEmolaModal } from './MpesaEmolaModal';
 import { RideReceiptModal } from './RideReceiptModal';
@@ -17,6 +17,7 @@ export const MotoTaxiView: React.FC = () => {
   
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const [lastCompletedRide, setLastCompletedRide] = useState<RideRequest | null>(null);
 
   // Pricing logic in Meticais (MT)
   const fareBase = selectedOption === 'moto_standard' ? 80 : 120;
@@ -39,6 +40,14 @@ export const MotoTaxiView: React.FC = () => {
       paymentMethod,
       phonePayment: phone
     });
+  };
+
+  const handleFinishRide = () => {
+    if (currentRide) {
+      setLastCompletedRide({ ...currentRide, status: 'completed' });
+      completeCurrentRide();
+      setIsReceiptOpen(true);
+    }
   };
 
   return (
@@ -297,7 +306,7 @@ export const MotoTaxiView: React.FC = () => {
                   {/* Actions */}
                   <div className="space-y-2 pt-2">
                     <button
-                      onClick={completeCurrentRide}
+                      onClick={handleFinishRide}
                       className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2"
                     >
                       <CheckCircle className="w-4 h-4" />
@@ -341,7 +350,7 @@ export const MotoTaxiView: React.FC = () => {
 
       {/* Receipt Modal */}
       <RideReceiptModal
-        ride={currentRide}
+        ride={lastCompletedRide || currentRide}
         isOpen={isReceiptOpen}
         onClose={() => setIsReceiptOpen(false)}
       />
