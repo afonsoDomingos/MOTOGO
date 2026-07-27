@@ -18,7 +18,7 @@ const MainApp: React.FC = () => {
   const [selectedHistoryRide, setSelectedHistoryRide] = useState<any | null>(null);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0b0f17] text-white">
+    <div className="min-h-screen flex flex-col bg-slate-100 text-gray-900">
       {/* Header Navbar */}
       <Navbar
         onOpenWallet={() => setIsWalletOpen(true)}
@@ -28,36 +28,36 @@ const MainApp: React.FC = () => {
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6 space-y-6">
         {role === 'passenger' ? (
           <>
-            {/* Service Navigation Tabs */}
+            {/* Service Navigation Tabs (Matching MOTO GO Home mockup - Light Theme) */}
             <div className="grid grid-cols-3 gap-3">
               {/* MOTO TÁXI Tab */}
               <button
                 onClick={() => setActiveTab('taxi')}
                 className={`p-4 rounded-3xl border transition-all text-left flex items-center justify-between group relative overflow-hidden ${
                   activeTab === 'taxi'
-                    ? 'bg-gradient-to-r from-amber-500/20 via-gray-900 to-gray-900 border-amber-500 shadow-xl shadow-amber-500/10'
-                    : 'bg-gray-900/60 border-gray-800 hover:border-gray-700'
+                    ? 'bg-amber-500/10 border-amber-400 shadow-lg shadow-amber-500/10'
+                    : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-110 ${
                       activeTab === 'taxi'
-                        ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30'
-                        : 'bg-gray-800 text-amber-400'
+                        ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30'
+                        : 'bg-gray-100 text-amber-600'
                     }`}
                   >
                     🏍️
                   </div>
                   <div>
-                    <div className="text-sm font-black text-white">MOTO TÁXI</div>
-                    <div className="text-[10px] text-gray-400 font-semibold hidden sm:block">
+                    <div className="text-sm font-black text-gray-900">MOTO TÁXI</div>
+                    <div className="text-[10px] text-gray-500 font-semibold hidden sm:block">
                       Viaje com segurança e rapidez
                     </div>
                   </div>
                 </div>
                 {activeTab === 'taxi' && (
-                  <div className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm shadow-amber-500" />
                 )}
               </button>
 
@@ -66,29 +66,29 @@ const MainApp: React.FC = () => {
                 onClick={() => setActiveTab('food')}
                 className={`p-4 rounded-3xl border transition-all text-left flex items-center justify-between group relative overflow-hidden ${
                   activeTab === 'food'
-                    ? 'bg-gradient-to-r from-amber-500/20 via-gray-900 to-gray-900 border-amber-500 shadow-xl shadow-amber-500/10'
-                    : 'bg-gray-900/60 border-gray-800 hover:border-gray-700'
+                    ? 'bg-amber-500/10 border-amber-400 shadow-lg shadow-amber-500/10'
+                    : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-110 ${
                       activeTab === 'food'
-                        ? 'bg-amber-500 text-black shadow-md shadow-amber-500/30'
-                        : 'bg-gray-800 text-amber-400'
+                        ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30'
+                        : 'bg-gray-100 text-amber-600'
                     }`}
                   >
                     🍕
                   </div>
                   <div>
-                    <div className="text-sm font-black text-white">MOTO FOOD</div>
-                    <div className="text-[10px] text-gray-400 font-semibold hidden sm:block">
+                    <div className="text-sm font-black text-gray-900">MOTO FOOD</div>
+                    <div className="text-[10px] text-gray-500 font-semibold hidden sm:block">
                       Refeições favoritas entregues
                     </div>
                   </div>
                 </div>
                 {activeTab === 'food' && (
-                  <div className="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm shadow-amber-500" />
                 )}
               </button>
 
@@ -97,29 +97,29 @@ const MainApp: React.FC = () => {
                 onClick={() => setActiveTab('delivery')}
                 className={`p-4 rounded-3xl border transition-all text-left flex items-center justify-between group relative overflow-hidden ${
                   activeTab === 'delivery'
-                    ? 'bg-gradient-to-r from-emerald-500/20 via-gray-900 to-gray-900 border-emerald-500 shadow-xl shadow-emerald-500/10'
-                    : 'bg-gray-900/60 border-gray-800 hover:border-gray-700'
+                    ? 'bg-emerald-500/10 border-emerald-500 shadow-lg shadow-emerald-500/10'
+                    : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold transition-transform group-hover:scale-110 ${
                       activeTab === 'delivery'
-                        ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/30'
-                        : 'bg-gray-800 text-emerald-400'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        : 'bg-gray-100 text-emerald-600'
                     }`}
                   >
                     📦
                   </div>
                   <div>
-                    <div className="text-sm font-black text-white">MOTO DELIVERY</div>
-                    <div className="text-[10px] text-gray-400 font-semibold hidden sm:block">
+                    <div className="text-sm font-black text-gray-900">MOTO DELIVERY</div>
+                    <div className="text-[10px] text-gray-500 font-semibold hidden sm:block">
                       Enviamos o que precisa
                     </div>
                   </div>
                 </div>
                 {activeTab === 'delivery' && (
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-600 shadow-sm shadow-emerald-600" />
                 )}
               </button>
             </div>
@@ -135,59 +135,59 @@ const MainApp: React.FC = () => {
         )}
       </main>
 
-      {/* Footer Feature Badges */}
-      <footer className="border-t border-gray-800 bg-gray-900/80 py-8 px-4 mt-12">
+      {/* Footer Feature Badges (Matching screenshot footer - Light Theme) */}
+      <footer className="border-t border-gray-200 bg-white py-8 px-4 mt-12 shadow-sm">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 border border-amber-500/20">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-black text-white">Seguro</h4>
-              <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">
+              <h4 className="text-xs font-black text-gray-900">Seguro</h4>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-snug font-medium">
                 Viagens e entregas 100% seguras com motoristas verificados.
               </p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
               <Headphones className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-black text-white">Suporte 24/7</h4>
-              <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">
+              <h4 className="text-xs font-black text-gray-900">Suporte 24/7</h4>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-snug font-medium">
                 Estamos sempre disponíveis para ajudar em Maputo.
               </p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 border border-amber-500/20">
               <Wallet className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-black text-white">Pagamentos Flexíveis</h4>
-              <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">
+              <h4 className="text-xs font-black text-gray-900">Pagamentos Flexíveis</h4>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-snug font-medium">
                 Meticais via M-Pesa, e-Mola, Dinheiro ou MotoSaldo.
               </p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
               <Zap className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-black text-white">Feito Para Si</h4>
-              <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">
+              <h4 className="text-xs font-black text-gray-900">Feito Para Si</h4>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-snug font-medium">
                 Rápido, simples e confiável para Moçambique 🇲🇿.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto pt-6 mt-6 border-t border-gray-800/80 text-center text-xs text-gray-500 font-medium">
+        <div className="max-w-6xl mx-auto pt-6 mt-6 border-t border-gray-100 text-center text-xs text-gray-500 font-medium">
           © 2026 MOTO GO Moçambique. Todos os direitos reservados.
         </div>
       </footer>
@@ -197,14 +197,14 @@ const MainApp: React.FC = () => {
 
       {/* History Modal */}
       {isHistoryOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-          <div className="relative w-full max-w-lg bg-gray-900 border border-gray-800 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-lg bg-white border border-gray-200 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <History className="w-5 h-5 text-amber-400" />
-                <h3 className="text-base font-extrabold text-white">Histórico de Corridas & Entregas</h3>
+                <History className="w-5 h-5 text-amber-500" />
+                <h3 className="text-base font-extrabold text-gray-900">Histórico de Corridas & Entregas</h3>
               </div>
-              <button onClick={() => setIsHistoryOpen(false)} className="p-1 rounded-xl bg-gray-800 text-gray-400">
+              <button onClick={() => setIsHistoryOpen(false)} className="p-1 rounded-xl bg-gray-100 text-gray-400 hover:text-gray-900">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -214,26 +214,26 @@ const MainApp: React.FC = () => {
                 <div
                   key={item.id}
                   onClick={() => setSelectedHistoryRide(item)}
-                  className="p-3.5 rounded-2xl bg-gray-800/50 border border-gray-700/60 hover:border-amber-400/50 transition-all cursor-pointer flex items-center justify-between"
+                  className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 hover:border-amber-400 transition-all cursor-pointer flex items-center justify-between shadow-sm"
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-black text-white">{item.id}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold uppercase">
+                      <span className="text-xs font-black text-gray-900">{item.id}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 font-bold uppercase">
                         {item.service}
                       </span>
                     </div>
-                    <div className="text-[11px] text-gray-400 mt-1">
+                    <div className="text-[11px] text-gray-600 font-medium mt-1">
                       {item.origin.name} ➔ {item.destination.name}
                     </div>
-                    <div className="text-[10px] text-gray-500 mt-0.5">{item.date}</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">{item.date}</div>
                   </div>
 
                   <div className="text-right">
-                    <div className="text-xs font-black text-amber-400">
+                    <div className="text-xs font-black text-amber-600">
                       {item.totalMT.toFixed(2).replace('.', ',')} MT
                     </div>
-                    <div className="text-[10px] text-gray-400 uppercase font-bold">{item.paymentMethod}</div>
+                    <div className="text-[10px] text-gray-500 uppercase font-bold">{item.paymentMethod}</div>
                   </div>
                 </div>
               ))}

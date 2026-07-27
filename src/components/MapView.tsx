@@ -32,7 +32,7 @@ export const MapView: React.FC<MapViewProps> = ({
         zoomControl: false
       });
 
-      // Dark Mode TileLayer (CartoDB Dark Matter)
+      // Light Mode TileLayer (CartoDB Voyager - Clean Light Style)
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
         maxZoom: 19
@@ -66,9 +66,9 @@ export const MapView: React.FC<MapViewProps> = ({
             display: flex;
             align-items: center;
             justify-content: center;
-            color: black;
+            color: white;
             font-weight: bold;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.25);
             border: 3px solid white;
             font-size: 14px;
           ">
@@ -105,7 +105,7 @@ export const MapView: React.FC<MapViewProps> = ({
           [origin.lat, origin.lng],
           [destination.lat, destination.lng]
         ],
-        { color: '#FFB300', weight: 5, dashArray: '8, 8', opacity: 0.9 }
+        { color: '#FFB300', weight: 5, dashArray: '8, 8', opacity: 0.95 }
       );
       markersGroup.addLayer(polyline);
 
@@ -117,14 +117,14 @@ export const MapView: React.FC<MapViewProps> = ({
         className: 'route-badge',
         html: `
           <div style="
-            background: #111827;
-            color: #fff;
-            padding: 4px 10px;
+            background: #ffffff;
+            color: #0f172a;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 700;
-            border: 1px solid #FFC107;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            font-weight: 800;
+            border: 2px solid #FFC107;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             white-space: nowrap;
           ">
             ⏱️ 7 min (2,6 km)
@@ -144,21 +144,21 @@ export const MapView: React.FC<MapViewProps> = ({
         html: `
           <div style="
             background: #00C853;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
-            box-shadow: 0 0 15px rgba(0,200,83,0.8);
-            border: 3px solid #111827;
+            box-shadow: 0 4px 15px rgba(0,200,83,0.5);
+            border: 3px solid #ffffff;
           " class="pulse-glow animate-float">
             🏍️
           </div>
         `,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20]
+        iconSize: [42, 42],
+        iconAnchor: [21, 21]
       });
       const driverMarker = L.marker([activeDriverLocation.lat, activeDriverLocation.lng], { icon: bikeIcon })
         .bindPopup('<b>Seu Motorista MOTO GO está a caminho!</b>');
@@ -170,22 +170,22 @@ export const MapView: React.FC<MapViewProps> = ({
           className: 'driver-bike-pin',
           html: `
             <div style="
-              background: #1e293b;
-              width: 32px;
-              height: 32px;
+              background: #ffffff;
+              width: 34px;
+              height: 34px;
               border-radius: 50%;
               display: flex;
               align-items: center;
               justify-content: center;
               font-size: 16px;
-              border: 2px solid #00C853;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+              border: 2.5px solid #00C853;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             ">
               🏍️
             </div>
           `,
-          iconSize: [32, 32],
-          iconAnchor: [16, 16]
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
         });
         const drvMarker = L.marker([drv.lat, drv.lng], { icon: bikeIcon })
           .bindPopup(`<b>${drv.name}</b><br/>${drv.motorbike} (${drv.plate})`);
@@ -201,7 +201,7 @@ export const MapView: React.FC<MapViewProps> = ({
   }, [origin, destination, drivers, activeDriverLocation]);
 
   return (
-    <div className="relative w-full h-full min-h-[280px] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl" style={{ height }}>
+    <div className="relative w-full h-full min-h-[280px] rounded-2xl overflow-hidden border border-gray-200 shadow-lg" style={{ height }}>
       <div ref={mapContainerRef} className="w-full h-full" />
     </div>
   );

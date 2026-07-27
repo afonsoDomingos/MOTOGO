@@ -25,23 +25,23 @@ export const MotoFoodView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Banner matching Moto Food Mockup */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-500 p-6 sm:p-8 text-black shadow-2xl">
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-400 p-6 sm:p-8 text-black shadow-xl">
         <div className="max-w-md space-y-2 relative z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/10 text-black text-xs font-black uppercase tracking-wider">
             <Utensils className="w-3.5 h-3.5" />
             <span>MOTO FOOD MOÇAMBIQUE</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-black leading-tight text-gray-950">
             Sua fome, a nossa entrega rápida!
           </h2>
-          <p className="text-xs sm:text-sm font-semibold opacity-90">
+          <p className="text-xs sm:text-sm font-bold opacity-90 text-gray-900">
             Pratos típicos e refeições dos melhores restaurantes de Maputo e Matola direto à sua porta.
           </p>
         </div>
       </div>
 
       {orderConfirmed && (
-        <div className="p-4 rounded-2xl bg-emerald-500 text-black font-extrabold text-sm flex items-center justify-between shadow-xl animate-in zoom-in">
+        <div className="p-4 rounded-2xl bg-emerald-600 text-white font-extrabold text-sm flex items-center justify-between shadow-lg animate-in zoom-in">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
             <span>Pedido Moto Food confirmado! O estafeta já está no restaurante a recolhar sua refeição.</span>
@@ -54,26 +54,26 @@ export const MotoFoodView: React.FC = () => {
         {/* Left Column: Restaurants & Dishes */}
         <div className="lg:col-span-8 space-y-6">
           {MOCK_RESTAURANTS.map((rest) => (
-            <div key={rest.id} className="p-5 rounded-3xl bg-gray-900 border border-gray-800 space-y-4">
+            <div key={rest.id} className="p-5 rounded-3xl bg-white border border-gray-200 shadow-md space-y-4">
               {/* Restaurant Header */}
-              <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-3">
                   <img
                     src={rest.image}
                     alt={rest.name}
-                    className="w-12 h-12 rounded-2xl object-cover border border-gray-700"
+                    className="w-12 h-12 rounded-2xl object-cover border border-gray-200"
                   />
                   <div>
-                    <h3 className="text-base font-extrabold text-white">{rest.name}</h3>
-                    <p className="text-xs text-gray-400">{rest.category}</p>
+                    <h3 className="text-base font-extrabold text-gray-900">{rest.name}</h3>
+                    <p className="text-xs text-gray-500 font-medium">{rest.category}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 text-xs">
-                  <span className="flex items-center gap-1 font-bold text-amber-400">
-                    <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <span className="flex items-center gap-1 font-bold text-amber-600">
+                    <Star className="w-3.5 h-3.5 fill-amber-500" />
                     {rest.rating}
                   </span>
-                  <span className="text-gray-400 flex items-center gap-1">
+                  <span className="text-gray-500 font-medium flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />
                     {rest.deliveryTime}
                   </span>
@@ -85,7 +85,7 @@ export const MotoFoodView: React.FC = () => {
                 {rest.dishes.map((dish) => (
                   <div
                     key={dish.id}
-                    className="p-3.5 rounded-2xl bg-gray-800/50 border border-gray-700/60 flex flex-col justify-between hover:border-amber-500/50 transition-all"
+                    className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 flex flex-col justify-between hover:border-amber-400 hover:bg-white transition-all shadow-sm"
                   >
                     <div className="space-y-2">
                       <img
@@ -93,12 +93,12 @@ export const MotoFoodView: React.FC = () => {
                         alt={dish.name}
                         className="w-full h-32 rounded-xl object-cover"
                       />
-                      <h4 className="text-xs font-bold text-white leading-snug">{dish.name}</h4>
-                      <p className="text-[11px] text-gray-400 line-clamp-2">{dish.description}</p>
+                      <h4 className="text-xs font-bold text-gray-900 leading-snug">{dish.name}</h4>
+                      <p className="text-[11px] text-gray-500 line-clamp-2">{dish.description}</p>
                     </div>
 
-                    <div className="flex items-center justify-between pt-3 mt-2 border-t border-gray-700/40">
-                      <span className="text-sm font-black text-amber-400">
+                    <div className="flex items-center justify-between pt-3 mt-2 border-t border-gray-200/80">
+                      <span className="text-sm font-black text-amber-600">
                         {dish.priceMT.toFixed(2).replace('.', ',')} MT
                       </span>
                       <button
@@ -119,22 +119,22 @@ export const MotoFoodView: React.FC = () => {
 
         {/* Right Column: Order Summary / Cart */}
         <div className="lg:col-span-4">
-          <div className="sticky top-20 p-5 rounded-3xl bg-gray-900 border border-gray-800 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+          <div className="sticky top-20 p-5 rounded-3xl bg-white border border-gray-200 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-amber-400" />
-                <h3 className="text-base font-extrabold text-white">Seu Pedido</h3>
+                <ShoppingBag className="w-5 h-5 text-amber-500" />
+                <h3 className="text-base font-extrabold text-gray-900">Seu Pedido</h3>
               </div>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/30">
                 {cart.length} itens
               </span>
             </div>
 
             {cart.length === 0 ? (
-              <div className="py-8 text-center text-gray-500 space-y-2">
-                <Utensils className="w-10 h-10 mx-auto stroke-1" />
-                <p className="text-xs font-medium">Seu carrinho está vazio.</p>
-                <p className="text-[10px] text-gray-600">Escolha pratos deliciosos ao lado para começar!</p>
+              <div className="py-8 text-center text-gray-400 space-y-2">
+                <Utensils className="w-10 h-10 mx-auto stroke-1 text-gray-300" />
+                <p className="text-xs font-medium text-gray-500">Seu carrinho está vazio.</p>
+                <p className="text-[10px] text-gray-400">Escolha pratos deliciosos ao lado para começar!</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -142,20 +142,20 @@ export const MotoFoodView: React.FC = () => {
                   {cart.map((item) => (
                     <div
                       key={item.dish.id}
-                      className="p-2.5 rounded-xl bg-gray-800/60 border border-gray-700/50 flex items-center justify-between text-xs"
+                      className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-between text-xs"
                     >
                       <div className="flex-1 pr-2">
-                        <div className="font-bold text-white truncate">{item.dish.name}</div>
-                        <div className="text-[10px] text-amber-400 font-semibold">
+                        <div className="font-bold text-gray-900 truncate">{item.dish.name}</div>
+                        <div className="text-[10px] text-amber-600 font-semibold">
                           {(item.dish.priceMT * item.quantity).toFixed(2).replace('.', ',')} MT
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-white px-2">x{item.quantity}</span>
+                        <span className="font-bold text-gray-900 px-2">x{item.quantity}</span>
                         <button
                           onClick={() => removeFromCart(item.dish.id)}
-                          className="p-1 rounded-lg text-gray-400 hover:text-red-400 hover:bg-gray-700"
+                          className="p-1 rounded-lg text-gray-400 hover:text-red-600 hover:bg-gray-200"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -165,18 +165,18 @@ export const MotoFoodView: React.FC = () => {
                 </div>
 
                 {/* Subtotals */}
-                <div className="space-y-1.5 pt-3 border-t border-gray-800 text-xs">
-                  <div className="flex justify-between text-gray-400">
+                <div className="space-y-1.5 pt-3 border-t border-gray-100 text-xs">
+                  <div className="flex justify-between text-gray-500">
                     <span>Subtotal</span>
-                    <span>{cartTotalMT.toFixed(2).replace('.', ',')} MT</span>
+                    <span className="font-medium text-gray-900">{cartTotalMT.toFixed(2).replace('.', ',')} MT</span>
                   </div>
-                  <div className="flex justify-between text-gray-400">
+                  <div className="flex justify-between text-gray-500">
                     <span>Taxa de entrega (Moto GO)</span>
-                    <span>{deliveryFeeMT.toFixed(2).replace('.', ',')} MT</span>
+                    <span className="font-medium text-gray-900">{deliveryFeeMT.toFixed(2).replace('.', ',')} MT</span>
                   </div>
-                  <div className="flex justify-between items-center font-black text-white text-base pt-2 border-t border-gray-800">
+                  <div className="flex justify-between items-center font-black text-gray-900 text-base pt-2 border-t border-gray-100">
                     <span>Total em MT</span>
-                    <span className="text-amber-400">{grandTotalMT.toFixed(2).replace('.', ',')} MT</span>
+                    <span className="text-amber-600">{grandTotalMT.toFixed(2).replace('.', ',')} MT</span>
                   </div>
                 </div>
 

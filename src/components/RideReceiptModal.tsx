@@ -20,89 +20,89 @@ export const RideReceiptModal: React.FC<RideReceiptModalProps> = ({ ride, isOpen
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in">
-      <div className="relative w-full max-w-md bg-gray-900 border border-gray-800 rounded-3xl p-6 shadow-2xl overflow-hidden space-y-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in">
+      <div className="relative w-full max-w-md bg-white border border-gray-200 rounded-3xl p-6 shadow-2xl overflow-hidden space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
               ✓
             </div>
-            <h3 className="text-base font-extrabold text-white">Detalhes da corrida</h3>
+            <h3 className="text-base font-black text-gray-900">Detalhes da corrida</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl bg-gray-800 text-gray-400 hover:text-white"
+            className="p-1.5 rounded-xl bg-gray-100 text-gray-400 hover:text-gray-900 hover:bg-gray-200"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Route details */}
-        <div className="bg-gray-800/50 rounded-2xl p-4 border border-gray-700/50 space-y-3">
+        <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200 space-y-3">
           <div className="flex items-start gap-3">
-            <div className="mt-1 w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 shadow-sm shadow-emerald-500" />
+            <div className="mt-1 w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 shadow-sm" />
             <div>
-              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">De</div>
-              <div className="text-xs font-extrabold text-white">{ride.origin.name}</div>
-              <div className="text-[11px] text-gray-400">{ride.origin.address}</div>
+              <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">De</div>
+              <div className="text-xs font-black text-gray-900">{ride.origin.name}</div>
+              <div className="text-[11px] text-gray-500">{ride.origin.address}</div>
             </div>
           </div>
 
-          <div className="border-l-2 border-dashed border-gray-700 ml-1 pl-5 my-1" />
+          <div className="border-l-2 border-dashed border-gray-300 ml-1 pl-5 my-1" />
 
           <div className="flex items-start gap-3">
-            <div className="mt-1 w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0 shadow-sm shadow-amber-500" />
+            <div className="mt-1 w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0 shadow-sm" />
             <div>
-              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Para</div>
-              <div className="text-xs font-extrabold text-white">{ride.destination.name}</div>
-              <div className="text-[11px] text-gray-400">{ride.destination.address}</div>
+              <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Para</div>
+              <div className="text-xs font-black text-gray-900">{ride.destination.name}</div>
+              <div className="text-[11px] text-gray-500">{ride.destination.address}</div>
             </div>
           </div>
         </div>
 
         {/* Date & Payment */}
         <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="p-3 rounded-xl bg-gray-800/40 border border-gray-700/50 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="p-3 rounded-xl bg-gray-50 border border-gray-200 flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-emerald-600 shrink-0" />
             <div>
-              <div className="text-[10px] text-gray-400">Data</div>
-              <div className="font-bold text-white text-[11px]">{ride.date}</div>
+              <div className="text-[10px] text-gray-500">Data</div>
+              <div className="font-bold text-gray-900 text-[11px]">{ride.date}</div>
             </div>
           </div>
 
-          <div className="p-3 rounded-xl bg-gray-800/40 border border-gray-700/50 flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-amber-400 shrink-0" />
+          <div className="p-3 rounded-xl bg-gray-50 border border-gray-200 flex items-center gap-2">
+            <CreditCard className="w-4 h-4 text-amber-500 shrink-0" />
             <div>
-              <div className="text-[10px] text-gray-400">Pagamento</div>
-              <div className="font-bold text-white uppercase text-[11px]">{ride.paymentMethod}</div>
+              <div className="text-[10px] text-gray-500">Pagamento</div>
+              <div className="font-bold text-gray-900 uppercase text-[11px]">{ride.paymentMethod}</div>
             </div>
           </div>
         </div>
 
         {/* Financial Breakdown */}
-        <div className="bg-gray-800/60 rounded-2xl p-4 border border-gray-700/60 space-y-2 text-xs">
-          <div className="flex justify-between text-gray-300">
+        <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200 space-y-2 text-xs">
+          <div className="flex justify-between text-gray-600 font-medium">
             <span>Preço da corrida</span>
-            <span className="font-bold">{ride.fareMT.toFixed(2).replace('.', ',')} MT</span>
+            <span className="font-bold text-gray-900">{ride.fareMT.toFixed(2).replace('.', ',')} MT</span>
           </div>
 
-          <div className="flex justify-between text-gray-300">
+          <div className="flex justify-between text-gray-600 font-medium">
             <span>Taxa de serviço</span>
-            <span className="font-bold">{ride.serviceFeeMT.toFixed(2).replace('.', ',')} MT</span>
+            <span className="font-bold text-gray-900">{ride.serviceFeeMT.toFixed(2).replace('.', ',')} MT</span>
           </div>
 
-          <div className="border-t border-gray-700/80 pt-2.5 mt-2 flex justify-between items-center text-white">
+          <div className="border-t border-gray-200 pt-2.5 mt-2 flex justify-between items-center text-gray-900">
             <span className="font-black text-sm">Total</span>
-            <span className="font-black text-lg text-emerald-400">
+            <span className="font-black text-lg text-emerald-600">
               {ride.totalMT.toFixed(2).replace('.', ',')} MT
             </span>
           </div>
         </div>
 
         {/* Rating Section */}
-        <div className="text-center bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-4 space-y-2">
-          <div className="text-xs font-bold text-gray-300">
+        <div className="text-center bg-emerald-50 border border-emerald-200 rounded-2xl p-4 space-y-2">
+          <div className="text-xs font-bold text-gray-700">
             {rated ? 'Obrigado pela sua avaliação!' : 'Avaliar corrida'}
           </div>
           <div className="flex justify-center gap-2">
@@ -115,7 +115,7 @@ export const RideReceiptModal: React.FC<RideReceiptModalProps> = ({ ride, isOpen
               >
                 <Star
                   className={`w-6 h-6 ${
-                    star <= rating ? 'fill-amber-400 text-amber-400' : 'text-gray-600'
+                    star <= rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
                   }`}
                 />
               </button>
@@ -127,14 +127,14 @@ export const RideReceiptModal: React.FC<RideReceiptModalProps> = ({ ride, isOpen
         <div className="flex items-center gap-2">
           <button
             onClick={() => alert('Suporte MOTO GO Moçambique: Contato via WhatsApp / Chamada +258 84 000 1122')}
-            className="flex-1 py-3 rounded-2xl bg-gray-800 hover:bg-gray-700 border border-gray-700 text-xs font-bold text-gray-300 flex items-center justify-center gap-1.5 transition-colors"
+            className="flex-1 py-3 rounded-2xl bg-gray-100 hover:bg-gray-200 border border-gray-200 text-xs font-bold text-gray-700 flex items-center justify-center gap-1.5 transition-colors"
           >
-            <HelpCircle className="w-4 h-4 text-emerald-400" />
+            <HelpCircle className="w-4 h-4 text-emerald-600" />
             <span>Precisa de ajuda?</span>
           </button>
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs shadow-md shadow-emerald-500/20 transition-all"
+            className="flex-1 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-md shadow-emerald-600/20 transition-all"
           >
             Concluir
           </button>
