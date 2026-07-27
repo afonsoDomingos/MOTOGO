@@ -11,27 +11,28 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
   const { role, setRole, motoSaldo } = useApp();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 px-4 py-3 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 px-4 py-2.5 shadow-sm">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-        {/* Brand Logo & Tagline */}
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-md shadow-emerald-500/20">
-            <Bike className="w-6 h-6 text-white font-extrabold stroke-[2.5]" />
+        {/* Official Brand Logo */}
+        <div 
+          className="flex items-center gap-2.5 cursor-pointer group" 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          <div className="relative">
+            <img 
+              src="/MOTO GO LOGOTIPO.png" 
+              alt="MOTO GO Logo" 
+              className="h-11 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
+            />
             <span className="absolute -top-1 -right-1 flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
             </span>
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-xl font-black tracking-tight text-gray-900">MOTO</span>
-              <span className="text-xl font-black tracking-tight text-emerald-600">GO</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 font-bold uppercase tracking-wider ml-1">
-                MZ 🇲🇿
-              </span>
-            </div>
-            <p className="text-[11px] text-gray-500 hidden sm:block font-medium">A sua vida em movimento, nós levamos mais longe.</p>
-          </div>
+
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 font-extrabold uppercase tracking-wider hidden sm:inline-block">
+            MOÇAMBIQUE 🇲🇿
+          </span>
         </div>
 
         {/* Role Toggle & Wallet pill */}
@@ -62,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
             </button>
           </div>
 
-          {/* MotoSaldo Button (Matching screenshot) */}
+          {/* MotoSaldo Button */}
           <button
             onClick={onOpenWallet}
             className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-900 transition-all shadow-sm group"
