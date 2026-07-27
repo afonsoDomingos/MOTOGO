@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { MAPUTO_LOCATIONS } from '../data/mockData';
 import type { LocationPoint, RideOption, PaymentMethod, RideRequest } from '../types';
 import { MapView } from './MapView';
 import { MpesaEmolaModal } from './MpesaEmolaModal';
 import { RideReceiptModal } from './RideReceiptModal';
-import { Bike, CreditCard, Phone, MessageSquare, Star, CheckCircle, ArrowRight } from 'lucide-react';
+import { Bike, CreditCard, Phone, MessageSquare, Star, CheckCircle, ArrowRight, Clock, Navigation } from 'lucide-react';
 
 export const MotoTaxiView: React.FC = () => {
-  const { currentRide, requestRide, cancelRide, completeCurrentRide } = useApp();
+  const { currentRide, requestRide, cancelRide, completeCurrentRide, computePriceInfo, locations } = useApp();
 
-  const [origin, setOrigin] = useState<LocationPoint>(MAPUTO_LOCATIONS[0]);
-  const [destination, setDestination] = useState<LocationPoint>(MAPUTO_LOCATIONS[1]);
+  const [origin, setOrigin] = useState<LocationPoint>(locations[0] || { name: 'Av. Julius Nyerere, 1234', address: 'Polana', lat: -25.962, lng: 32.5895 });
+  const [destination, setDestination] = useState<LocationPoint>(locations[1] || { name: 'Maputo Shopping', address: 'Baixa', lat: -25.9735, lng: 32.568 });
   const [selectedOption, setSelectedOption] = useState<RideOption>('moto_standard');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('mpesa');
   
@@ -19,8 +18,9 @@ export const MotoTaxiView: React.FC = () => {
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
   const [lastCompletedRide, setLastCompletedRide] = useState<RideRequest | null>(null);
 
-  // Pricing logic in Meticais (MT)
-  const fareBase = selectedOption === 'moto_standard' ? 80 : 120;
+  // Dynamic calculation based on exact user pricing specification
+  const priceInfo = computePriceInfo(origin, destination);
+  const fareBase = selectedOption === 'moto_standard' ? priceInfo.priceMT : priceInfo.priceMT + 40; // Moto Plus +40 MT
   const serviceFee = 10;
   const totalMT = fareBase + serviceFee;
 
@@ -89,12 +89,12 @@ export const MotoTaxiView: React.FC = () => {
                     <select
                       value={origin.name}
                       onChange={(e) => {
-                        const found = MAPUTO_LOCATIONS.find((l) => l.name === e.target.value);
+                        const found = locations.find((l) => l.name === e.target.value);
                         if (found) setOrigin(found);
                       }}
                       className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 font-bold text-xs focus:outline-none focus:border-emerald-500 focus:bg-white transition-colors"
                     >
-                      {MAPUTO_LOCATIONS.map((loc) => (
+                      {locations.map((loc) => (
                         <option key={loc.name} value={loc.name}>
                           {loc.name}
                         </option>
@@ -113,12 +113,12 @@ export const MotoTaxiView: React.FC = () => {
                     <select
                       value={destination.name}
                       onChange={(e) => {
-                        const found = MAPUTO_LOCATIONS.find((l) => l.name === e.target.value);
+                        const found = locations.find((l) => l.name === e.target.value);
                         if (found) setDestination(found);
                       }}
                       className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 font-bold text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-colors"
                     >
-                      {MAPUTO_LOCATIONS.map((loc) => (
+                      {locations.map((loc) => (
                         <option key={loc.name} value={loc.name}>
                           {loc.name}
                         </option>
@@ -128,7 +128,19 @@ export const MotoTaxiView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Ride Option Choice (Matching screenshot: Moto vs Moto Plus) */}
+              {/* Automatic Calculation Indicator (User Specification Rule) */}
+              <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between text-xs font-bold text-gray-900">
+                <div className="flex items-center gap-1.5 text-amber-700">
+                  <Navigation className="w-4 h-4" />
+                  <span>Distância: {priceInfo.distanceKm} km</span>
+                </div>
+                <div className="flex items-center gap-1 text-emerald-700">
+                  <Clock className="w-4 h-4" />
+                  <span>Tempo Médio: {priceInfo.estimatedMinutes} min</span>
+                </div>
+              </div>
+
+              {/* Ride Option Choice */}
               <div className="space-y-2 pt-1">
                 <label className="text-xs font-bold text-gray-900">Escolha o tipo de viagem</label>
                 
@@ -152,11 +164,11 @@ export const MotoTaxiView: React.FC = () => {
                           <span className="text-xs font-black text-gray-900">Moto</span>
                           <span className="text-[10px] text-gray-500 font-semibold">👤 1</span>
                         </div>
-                        <p className="text-[10px] text-gray-500 font-medium">Rápido e económico • 2-4 min</p>
+                        <p className="text-[10px] text-gray-500 font-medium">Rápido e económico • {priceInfo.estimatedMinutes} min</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-black text-gray-900">80,00 MT</div>
+                      <div className="text-sm font-black text-gray-900">{priceInfo.priceMT.toFixed(2).replace('.', ',')} MT</div>
                       <div className="text-[9px] text-emerald-700 font-bold">+10 MT taxa</div>
                     </div>
                   </button>
@@ -184,7 +196,7 @@ export const MotoTaxiView: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-black text-gray-900">120,00 MT</div>
+                      <div className="text-sm font-black text-gray-900">{(priceInfo.priceMT + 40).toFixed(2).replace('.', ',')} MT</div>
                       <div className="text-[9px] text-emerald-700 font-bold">+10 MT taxa</div>
                     </div>
                   </button>
@@ -220,7 +232,7 @@ export const MotoTaxiView: React.FC = () => {
               </button>
             </div>
           ) : (
-            /* Active Ride Tracking Card (Matching screenshot "A caminho") */
+            /* Active Ride Tracking Card */
             <div className="p-5 rounded-3xl bg-white border border-emerald-500/40 shadow-xl space-y-5 animate-in fade-in">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2">
@@ -248,7 +260,7 @@ export const MotoTaxiView: React.FC = () => {
                 </div>
               ) : (
                 <>
-                  {/* Driver Card (Matching screenshot: Manuel Ernesto) */}
+                  {/* Driver Card */}
                   {currentRide.driver && (
                     <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 flex items-center justify-between">
                       <div className="flex items-center gap-3">

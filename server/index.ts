@@ -8,6 +8,7 @@ import Driver from './models/Driver.js';
 import Restaurant from './models/Restaurant.js';
 import Ride from './models/Ride.js';
 import Transaction from './models/Transaction.js';
+import User from './models/User.js';
 
 dotenv.config();
 
@@ -25,6 +26,64 @@ connectDB().then(() => {
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'online', database: 'MongoDB Atlas - motogodb', time: new Date() });
+});
+
+// Authentication (Login & Register)
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email.toLowerCase() });
+    
+    if (!user || user.passwordHash !== password) {
+      return res.status(401).json({ error: 'Credenciais inválidas' });
+    }
+
+    res.json({
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        phone: user.phone,
+        motoSaldo: user.motoSaldo
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao autenticar usuário' });
+  }
+});
+
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { email, password, name, role, phone } = req.body;
+    const existing = await User.findOne({ email: email.toLowerCase() });
+    if (existing) {
+      return res.status(400).json({ error: 'Este e-mail já está cadastrado' });
+    }
+
+    const newUser = new User({
+      email: email.toLowerCase(),
+      passwordHash: password,
+      name,
+      role: role || 'passenger',
+      phone,
+      motoSaldo: role === 'passenger' ? 350.00 : 0
+    });
+    await newUser.save();
+
+    res.status(201).json({
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+        phone: newUser.phone,
+        motoSaldo: newUser.motoSaldo
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao cadastrar usuário' });
+  }
 });
 
 // Locations

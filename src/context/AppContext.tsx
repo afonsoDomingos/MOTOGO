@@ -11,12 +11,27 @@ import type {
   LocationPoint
 } from '../types';
 import { INITIAL_TRANSACTIONS, MOCK_DRIVERS, RECENT_RIDES_HISTORY, MAPUTO_LOCATIONS, MOCK_RESTAURANTS } from '../data/mockData';
+import { calculateDistanceKm, calculateRoutePrice } from '../utils/pricing';
+import type { RoutePriceInfo } from '../utils/pricing';
 
 const API_BASE_URL = 'http://localhost:3001/api';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  phone?: string;
+  motoSaldo?: number;
+}
 
 interface AppContextType {
   role: UserRole;
   setRole: (role: UserRole) => void;
+  currentUser: AuthUser | null;
+  loginUser: (email: string, pass: string) => Promise<AuthUser | null>;
+  logoutUser: () => void;
+
   motoSaldo: number;
   transactions: WalletTransaction[];
   rideHistory: RideRequest[];
@@ -42,6 +57,9 @@ interface AppContextType {
   acceptRideAsDriver: (rideId: string) => void;
   activeDriver: Driver;
 
+  // Dynamic Pricing Table Engine
+  computePriceInfo: (origin: LocationPoint, destination: LocationPoint) => RoutePriceInfo;
+
   // MongoDB Real Data
   locations: LocationPoint[];
   restaurants: RestaurantItem[];
@@ -51,6 +69,15 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>({
+    id: 'usr-cliente',
+    email: 'cliente@motogo.com',
+    name: 'Cliente MOTO GO',
+    role: 'passenger',
+    phone: '+258 84 123 4567',
+    motoSaldo: 350.00
+  });
+
   const [role, setRole] = useState<UserRole>('passenger');
   const [motoSaldo, setMotoSaldo] = useState<number>(350.00); // 350,00 MT matching screenshot
   const [transactions, setTransactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
@@ -83,6 +110,90 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       date: new Date().toLocaleTimeString('pt-MZ', { hour: '2-digit', minute: '2-digit' })
     }
   ]);
+
+  // Dynamic Route & Price computation based on exact user specification:
+  // Até 2 km = 5 min = 50 MT
+  // 3 km = 7 min = 60 MT
+  // 5 km = 10 min = 80 MT
+  // 8 km = 15 min = 110 MT
+  // 10 km = 20 min = 130 MT
+  // 15 km = 30 min = 180 MT
+  // 20 km = 40 min = 230 MT
+  const computePriceInfo = (origin: LocationPoint, destination: LocationPoint): RoutePriceInfo => {
+    const km = calculateDistanceKm(origin.lat, origin.lng, destination.lat, destination.lng);
+    return calculateRoutePrice(km);
+  };
+
+  // Login handler
+  const loginUser = async (email: string, pass: string): Promise<AuthUser | null> => {
+    // Check preset credentials requested by user
+    const cleanEmail = email.toLowerCase().trim();
+
+    if (cleanEmail === 'cliente@motogo.com' && pass === '@Cliente123@') {
+      const u: AuthUser = {
+        id: 'usr-1',
+        email: cleanEmail,
+        name: 'Cliente MOTO GO',
+        role: 'passenger',
+        phone: '+258 84 123 4567',
+        motoSaldo: 350.00
+      };
+      setCurrentUser(u);
+      setRole('passenger');
+      return u;
+    }
+
+    if (cleanEmail === 'motorista@motogo.com' && pass === '@Motorista123@') {
+      const u: AuthUser = {
+        id: 'usr-2',
+        email: cleanEmail,
+        name: 'Manuel Ernesto',
+        role: 'driver',
+        phone: '+258 84 912 3456',
+        motoSaldo: 1450.00
+      };
+      setCurrentUser(u);
+      setRole('driver');
+      return u;
+    }
+
+    if (cleanEmail === 'admin@motogo.com' && pass === '@Admin123@') {
+      const u: AuthUser = {
+        id: 'usr-3',
+        email: cleanEmail,
+        name: 'Administrador MOTO GO',
+        role: 'admin',
+        phone: '+258 84 000 0000',
+        motoSaldo: 0
+      };
+      setCurrentUser(u);
+      setRole('admin');
+      return u;
+    }
+
+    // Try MongoDB API login
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCurrentUser(data.user);
+        setRole(data.user.role);
+        return data.user;
+      }
+    } catch {
+      // fallback
+    }
+
+    return null;
+  };
+
+  const logoutUser = () => {
+    setCurrentUser(null);
+  };
 
   // Fetch Real Data from MongoDB on Mount
   useEffect(() => {
@@ -279,6 +390,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         role,
         setRole,
+        currentUser,
+        loginUser,
+        logoutUser,
         motoSaldo,
         transactions,
         rideHistory,
@@ -299,6 +413,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         availableRidesForDriver,
         acceptRideAsDriver,
         activeDriver,
+        computePriceInfo,
         locations,
         restaurants,
         isMongoConnected

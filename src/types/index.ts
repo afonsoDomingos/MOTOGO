@@ -1,14 +1,16 @@
-export type ServiceType = 'taxi' | 'food' | 'delivery';
+export type UserRole = 'passenger' | 'driver' | 'admin';
 
-export type PaymentMethod = 'mpesa' | 'emola' | 'cash' | 'wallet';
+export type ServiceType = 'taxi' | 'food' | 'delivery';
 
 export type RideOption = 'moto_standard' | 'moto_plus';
 
+export type PaymentMethod = 'mpesa' | 'emola' | 'cash' | 'wallet';
+
 export interface LocationPoint {
+  name: string;
+  address: string;
   lat: number;
   lng: number;
-  address: string;
-  name: string;
 }
 
 export interface Driver {
@@ -35,10 +37,28 @@ export interface RideRequest {
   serviceFeeMT: number;
   totalMT: number;
   paymentMethod: PaymentMethod;
-  status: 'idle' | 'searching' | 'accepted' | 'arrived' | 'in_transit' | 'completed' | 'cancelled';
+  status: 'searching' | 'accepted' | 'arrived' | 'in_transit' | 'completed' | 'cancelled';
   driver?: Driver;
-  date: string;
   phonePayment?: string;
+  date: string;
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: 'topup' | 'payment' | 'earning';
+  amountMT: number;
+  method: PaymentMethod;
+  description: string;
+  timestamp: string;
+  reference?: string;
+}
+
+export interface Dish {
+  id: string;
+  name: string;
+  description: string;
+  priceMT: number;
+  image: string;
 }
 
 export interface RestaurantItem {
@@ -52,39 +72,8 @@ export interface RestaurantItem {
   dishes: Dish[];
 }
 
-export interface Dish {
-  id: string;
-  name: string;
-  description: string;
-  priceMT: number;
-  image: string;
-}
-
 export interface CartItem {
   dish: Dish;
   quantity: number;
   restaurantName: string;
 }
-
-export interface DeliveryPackage {
-  senderAddress: string;
-  recipientAddress: string;
-  recipientName: string;
-  recipientPhone: string;
-  packageType: 'small' | 'medium' | 'large';
-  observations?: string;
-  paymentMethod: PaymentMethod;
-  fareMT: number;
-}
-
-export interface WalletTransaction {
-  id: string;
-  type: 'topup' | 'payment' | 'earning';
-  amountMT: number;
-  method: PaymentMethod;
-  description: string;
-  timestamp: string;
-  reference?: string;
-}
-
-export type UserRole = 'passenger' | 'driver';
