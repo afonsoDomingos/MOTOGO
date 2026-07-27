@@ -21,16 +21,59 @@ export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Compress and resize image using HTML5 Canvas to prevent 413 Payload Too Large
+  const resizeAndCompressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1024;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            // Convert to JPEG with 0.85 quality (~150KB size)
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+            resolve(compressedBase64);
+          } else {
+            resolve(e.target?.result as string);
+          }
+        };
+        img.onerror = (err) => reject(err);
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setErrorMsg('');
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await resizeAndCompressImage(file);
+        setPreviewUrl(compressed);
+      } catch {
+        setErrorMsg('Erro ao ler a imagem selecionada.');
+      }
     }
   };
 
@@ -62,10 +105,11 @@ export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
           onClose();
         }, 1200);
       } else {
-        throw new Error('Falha no upload');
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `Erro ${response.status}: Falha no upload`);
       }
-    } catch {
-      setErrorMsg('Erro ao enviar imagem para o Cloudinary (dnvnftvky).');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Erro ao enviar imagem para o Cloudinary (dnvnftvky).');
       setLoading(false);
     }
   };
@@ -104,7 +148,7 @@ export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
               <div className="space-y-2">
                 <ImageIcon className="w-10 h-10 mx-auto text-gray-400" />
                 <div className="text-xs font-extrabold text-gray-700">Clique ou arraste para selecionar imagem</div>
-                <div className="text-[10px] text-gray-400">Suporta JPG, PNG, WEBP • Cloudinary dnvnftvky</div>
+                <div className="text-[10px] text-gray-400">Compressão automática • Cloudinary dnvnftvky</div>
               </div>
             )}
           </div>
