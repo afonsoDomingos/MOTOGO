@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { AuthModal } from './AuthModal';
-import { Wallet, Tag, Bike, User, ShieldCheck, Database, LogIn } from 'lucide-react';
+import { ImageUploadModal } from './ImageUploadModal';
+import { Wallet, Tag, Bike, User, ShieldCheck, Database, LogIn, Camera } from 'lucide-react';
 
 interface NavbarProps {
   onOpenWallet: () => void;
@@ -11,6 +12,8 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) => {
   const { role, setRole, motoSaldo, currentUser, isMongoConnected } = useApp();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | null>(null);
 
   return (
     <>
@@ -49,7 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
 
           {/* 3 Interfaces Switcher & User Auth Controls */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* 3 Interfaces Switcher: Cliente | Motociclista | Admin Web */}
+            {/* 3 Interfaces Switcher: Cliente | Motorista | Admin Web */}
             <div className="bg-gray-100 p-1 rounded-xl border border-gray-200 flex items-center gap-0.5">
               <button
                 onClick={() => setRole('passenger')}
@@ -109,16 +112,29 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
               </button>
             )}
 
+            {/* Cloudinary Profile Photo Upload Button */}
+            <button
+              onClick={() => setIsUploadModalOpen(true)}
+              className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 transition-all relative"
+              title="Upload Foto de Perfil (Cloudinary)"
+            >
+              <Camera className="w-4 h-4 text-emerald-600" />
+            </button>
+
             {/* Auth / Account Profile Button */}
             {currentUser ? (
               <button
                 onClick={() => setIsAuthModalOpen(true)}
-                className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 border border-gray-200 flex items-center gap-2 text-xs font-bold text-gray-900"
+                className="p-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 border border-gray-200 flex items-center gap-2 text-xs font-bold text-gray-900"
                 title={`Conectado como ${currentUser.email}`}
               >
-                <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-[10px]">
-                  {currentUser.name[0]}
-                </div>
+                {profileAvatarUrl ? (
+                  <img src={profileAvatarUrl} alt="Avatar" className="w-7 h-7 rounded-full object-cover border border-emerald-500" />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-[10px]">
+                    {currentUser.name[0]}
+                  </div>
+                )}
                 <span className="hidden lg:inline">{currentUser.name}</span>
               </button>
             ) : (
@@ -147,6 +163,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
 
       {/* Login & Register Modal */}
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+
+      {/* Cloudinary Image Upload Modal */}
+      <ImageUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        title="Enviar Foto para o Cloudinary (dnvnftvky)"
+        onImageUploaded={(url) => setProfileAvatarUrl(url)}
+      />
     </>
   );
 };
