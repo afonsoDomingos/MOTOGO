@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { AuthModal } from './AuthModal';
 import { ImageUploadModal } from './ImageUploadModal';
-import { Wallet, Tag, Bike, User, ShieldCheck, Database, LogIn, Camera } from 'lucide-react';
+import { Wallet, Tag, Bike, User, ShieldCheck, Database, LogIn, Camera, LogOut, ChevronDown } from 'lucide-react';
 
 interface NavbarProps {
   onOpenWallet: () => void;
@@ -10,12 +10,31 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) => {
-  const { role, setRole, motoSaldo, currentUser, updateProfilePhoto, isMongoConnected } = useApp();
+  const { role, setRole, motoSaldo, currentUser, logoutUser, updateProfilePhoto, isMongoConnected } = useApp();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close user dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handlePhotoUploaded = (url: string) => {
     updateProfilePhoto(url);
+  };
+
+  const handleLogout = () => {
+    logoutUser();
+    setIsUserMenuOpen(false);
   };
 
   return (
@@ -115,31 +134,59 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
               </button>
             )}
 
-            {/* Cloudinary Profile Photo Upload Button */}
-            <button
-              onClick={() => setIsUploadModalOpen(true)}
-              className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 transition-all relative group"
-              title="Atualizar Foto de Perfil (Cloudinary dnvnftvky)"
-            >
-              <Camera className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
-            </button>
-
-            {/* Auth / Account Profile Button */}
+            {/* User Account & Logout Menu */}
             {currentUser ? (
-              <button
-                onClick={() => setIsUploadModalOpen(true)}
-                className="p-1 rounded-xl bg-gray-100 hover:bg-gray-200 border border-gray-200 flex items-center gap-2 text-xs font-bold text-gray-900 transition-all"
-                title={`Clique para alterar foto de ${currentUser.email}`}
-              >
-                {currentUser.photo ? (
-                  <img src={currentUser.photo} alt="Avatar" className="w-7 h-7 rounded-full object-cover border-2 border-emerald-500 shadow-xs" />
-                ) : (
-                  <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-[11px] border border-emerald-500 shadow-xs">
-                    {currentUser.name[0]}
+              <div className="relative" ref={menuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="p-1.5 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 flex items-center gap-2 text-xs font-bold text-gray-900 transition-all shadow-sm"
+                >
+                  {currentUser.photo ? (
+                    <img src={currentUser.photo} alt="Avatar" className="w-7 h-7 rounded-full object-cover border-2 border-emerald-500 shadow-xs" />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-[11px] border border-emerald-500 shadow-xs">
+                      {currentUser.name[0]}
+                    </div>
+                  )}
+                  <span className="hidden lg:inline font-black">{currentUser.name}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                </button>
+
+                {/* Dropdown Menu */}
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-2xl shadow-2xl p-2 z-50 space-y-1 animate-in fade-in">
+                    {/* User Info Header */}
+                    <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                      <div className="font-extrabold text-xs text-gray-900 truncate">{currentUser.name}</div>
+                      <div className="text-[10px] text-gray-500 truncate font-medium">{currentUser.email}</div>
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 font-black text-[9px] uppercase">
+                        {currentUser.role}
+                      </span>
+                    </div>
+
+                    {/* Action 1: Upload Photo */}
+                    <button
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        setIsUploadModalOpen(true);
+                      }}
+                      className="w-full p-2.5 rounded-xl text-left text-xs font-bold text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2 transition-colors"
+                    >
+                      <Camera className="w-4 h-4 text-emerald-600" />
+                      <span>Alterar Foto de Perfil</span>
+                    </button>
+
+                    {/* Action 2: Logout */}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full p-2.5 rounded-xl text-left text-xs font-black text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors border-t border-gray-100"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Sair da Conta (Logout)</span>
+                    </button>
                   </div>
                 )}
-                <span className="hidden lg:inline pr-1">{currentUser.name}</span>
-              </button>
+              </div>
             ) : (
               <button
                 onClick={() => setIsAuthModalOpen(true)}
