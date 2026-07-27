@@ -23,6 +23,7 @@ export interface AuthUser {
   role: UserRole;
   phone?: string;
   motoSaldo?: number;
+  photo?: string;
 }
 
 interface AppContextType {
@@ -31,6 +32,7 @@ interface AppContextType {
   currentUser: AuthUser | null;
   loginUser: (email: string, pass: string) => Promise<AuthUser | null>;
   logoutUser: () => void;
+  updateProfilePhoto: (photoUrl: string) => Promise<void>;
 
   motoSaldo: number;
   transactions: WalletTransaction[];
@@ -111,22 +113,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   ]);
 
-  // Dynamic Route & Price computation based on exact user specification:
-  // Até 2 km = 5 min = 50 MT
-  // 3 km = 7 min = 60 MT
-  // 5 km = 10 min = 80 MT
-  // 8 km = 15 min = 110 MT
-  // 10 km = 20 min = 130 MT
-  // 15 km = 30 min = 180 MT
-  // 20 km = 40 min = 230 MT
   const computePriceInfo = (origin: LocationPoint, destination: LocationPoint): RoutePriceInfo => {
     const km = calculateDistanceKm(origin.lat, origin.lng, destination.lat, destination.lng);
     return calculateRoutePrice(km);
   };
 
+  // Update profile photo in state & MongoDB
+  const updateProfilePhoto = async (photoUrl: string) => {
+    if (currentUser) {
+      setCurrentUser((prev) => (prev ? { ...prev, photo: photoUrl } : null));
+      try {
+        await fetch(`${API_BASE_URL}/users/photo`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentUser.email, photoUrl })
+        });
+      } catch (err) {
+        console.error('Error persisting photo to MongoDB:', err);
+      }
+    }
+  };
+
   // Login handler
   const loginUser = async (email: string, pass: string): Promise<AuthUser | null> => {
-    // Check preset credentials requested by user
     const cleanEmail = email.toLowerCase().trim();
 
     if (cleanEmail === 'cliente@motogo.com' && pass === '@Cliente123@') {
@@ -136,7 +145,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: 'Cliente MOTO GO',
         role: 'passenger',
         phone: '+258 84 123 4567',
-        motoSaldo: 350.00
+        motoSaldo: 350.00,
+        photo: currentUser?.photo
       };
       setCurrentUser(u);
       setRole('passenger');
@@ -150,7 +160,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         name: 'Manuel Ernesto',
         role: 'driver',
         phone: '+258 84 912 3456',
-        motoSaldo: 1450.00
+        motoSaldo: 1450.00,
+        photo: MOCK_DRIVERS[0].photo
       };
       setCurrentUser(u);
       setRole('driver');
@@ -393,6 +404,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         currentUser,
         loginUser,
         logoutUser,
+        updateProfilePhoto,
         motoSaldo,
         transactions,
         rideHistory,

@@ -34,7 +34,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Cloudinary Image Upload Endpoint (For profile photos, drivers, dishes, delivery attachments)
+// Cloudinary Image Upload Endpoint
 app.post('/api/upload', async (req, res) => {
   try {
     const { image, folder } = req.body;
@@ -45,6 +45,24 @@ app.post('/api/upload', async (req, res) => {
     res.json({ url: secureUrl });
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Erro ao realizar upload no Cloudinary' });
+  }
+});
+
+// Profile Photo Update Route (MongoDB)
+app.patch('/api/users/photo', async (req, res) => {
+  try {
+    const { email, photoUrl } = req.body;
+    if (!email || !photoUrl) {
+      return res.status(400).json({ error: 'E-mail e URL da foto são obrigatórios' });
+    }
+    const updatedUser = await User.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      { photo: photoUrl },
+      { new: true }
+    );
+    res.json({ user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar foto de perfil no MongoDB' });
   }
 });
 
@@ -65,7 +83,8 @@ app.post('/api/auth/login', async (req, res) => {
         name: user.name,
         role: user.role,
         phone: user.phone,
-        motoSaldo: user.motoSaldo
+        motoSaldo: user.motoSaldo,
+        photo: user.photo
       }
     });
   } catch (error) {

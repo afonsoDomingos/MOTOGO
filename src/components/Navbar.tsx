@@ -10,10 +10,13 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) => {
-  const { role, setRole, motoSaldo, currentUser, isMongoConnected } = useApp();
+  const { role, setRole, motoSaldo, currentUser, updateProfilePhoto, isMongoConnected } = useApp();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [profileAvatarUrl, setProfileAvatarUrl] = useState<string | null>(null);
+
+  const handlePhotoUploaded = (url: string) => {
+    updateProfilePhoto(url);
+  };
 
   return (
     <>
@@ -115,27 +118,27 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
             {/* Cloudinary Profile Photo Upload Button */}
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 transition-all relative"
-              title="Upload Foto de Perfil (Cloudinary)"
+              className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 transition-all relative group"
+              title="Atualizar Foto de Perfil (Cloudinary dnvnftvky)"
             >
-              <Camera className="w-4 h-4 text-emerald-600" />
+              <Camera className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
             </button>
 
             {/* Auth / Account Profile Button */}
             {currentUser ? (
               <button
-                onClick={() => setIsAuthModalOpen(true)}
-                className="p-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 border border-gray-200 flex items-center gap-2 text-xs font-bold text-gray-900"
-                title={`Conectado como ${currentUser.email}`}
+                onClick={() => setIsUploadModalOpen(true)}
+                className="p-1 rounded-xl bg-gray-100 hover:bg-gray-200 border border-gray-200 flex items-center gap-2 text-xs font-bold text-gray-900 transition-all"
+                title={`Clique para alterar foto de ${currentUser.email}`}
               >
-                {profileAvatarUrl ? (
-                  <img src={profileAvatarUrl} alt="Avatar" className="w-7 h-7 rounded-full object-cover border border-emerald-500" />
+                {currentUser.photo ? (
+                  <img src={currentUser.photo} alt="Avatar" className="w-7 h-7 rounded-full object-cover border-2 border-emerald-500 shadow-xs" />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-[10px]">
+                  <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-[11px] border border-emerald-500 shadow-xs">
                     {currentUser.name[0]}
                   </div>
                 )}
-                <span className="hidden lg:inline">{currentUser.name}</span>
+                <span className="hidden lg:inline pr-1">{currentUser.name}</span>
               </button>
             ) : (
               <button
@@ -168,8 +171,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
       <ImageUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
-        title="Enviar Foto para o Cloudinary (dnvnftvky)"
-        onImageUploaded={(url) => setProfileAvatarUrl(url)}
+        title="Atualizar Foto de Perfil (Cloudinary dnvnftvky)"
+        onImageUploaded={handlePhotoUploaded}
       />
     </>
   );
