@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type {
   UserRole,
   PaymentMethod,
@@ -6,9 +6,13 @@ import type {
   WalletTransaction,
   CartItem,
   Dish,
-  Driver
+  Driver,
+  RestaurantItem,
+  LocationPoint
 } from '../types';
-import { INITIAL_TRANSACTIONS, MOCK_DRIVERS, RECENT_RIDES_HISTORY } from '../data/mockData';
+import { INITIAL_TRANSACTIONS, MOCK_DRIVERS, RECENT_RIDES_HISTORY, MAPUTO_LOCATIONS, MOCK_RESTAURANTS } from '../data/mockData';
+
+const API_BASE_URL = 'http://localhost:3001/api';
 
 interface AppContextType {
   role: UserRole;
@@ -37,6 +41,11 @@ interface AppContextType {
   availableRidesForDriver: RideRequest[];
   acceptRideAsDriver: (rideId: string) => void;
   activeDriver: Driver;
+
+  // MongoDB Real Data
+  locations: LocationPoint[];
+  restaurants: RestaurantItem[];
+  isMongoConnected: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -47,6 +56,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [transactions, setTransactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
   const [rideHistory, setRideHistory] = useState<RideRequest[]>(RECENT_RIDES_HISTORY);
   const [currentRide, setCurrentRide] = useState<RideRequest | null>(null);
+  const [locations, setLocations] = useState<LocationPoint[]>(MAPUTO_LOCATIONS);
+  const [restaurants, setRestaurants] = useState<RestaurantItem[]>(MOCK_RESTAURANTS);
+  const [isMongoConnected, setIsMongoConnected] = useState<boolean>(false);
   
   // Moto Food cart
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -72,9 +84,87 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   ]);
 
+  // Fetch Real Data from MongoDB on Mount
+  useEffect(() => {
+    const fetchMongoData = async () => {
+      try {
+        const resHealth = await fetch(`${API_BASE_URL}/health`);
+        if (resHealth.ok) {
+          setIsMongoConnected(true);
+
+          // Locations
+          const resLoc = await fetch(`${API_BASE_URL}/locations`);
+          if (resLoc.ok) {
+            const locData = await resLoc.json();
+            if (locData.length > 0) setLocations(locData);
+          }
+
+          // Restaurants
+          const resRest = await fetch(`${API_BASE_URL}/restaurants`);
+          if (resRest.ok) {
+            const restData = await resRest.json();
+            if (restData.length > 0) setRestaurants(restData);
+          }
+
+          // Transactions
+          const resTx = await fetch(`${API_BASE_URL}/wallet/transactions`);
+          if (resTx.ok) {
+            const txData = await resTx.json();
+            if (txData.length > 0) {
+              setTransactions(
+                txData.map((t: any) => ({
+                  id: t.txId || t._id,
+                  type: t.type,
+                  amountMT: t.amountMT,
+                  method: t.method,
+                  description: t.description,
+                  timestamp: t.timestamp,
+                  reference: t.reference
+                }))
+              );
+            }
+          }
+        }
+      } catch {
+        setIsMongoConnected(false);
+      }
+    };
+
+    fetchMongoData();
+  }, []);
+
   const topupWallet = async (amount: number, method: PaymentMethod, phoneNumber: string): Promise<boolean> => {
-    // Simulate API delay for M-Pesa / e-Mola USSD push confirmation
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      if (isMongoConnected) {
+        const res = await fetch(`${API_BASE_URL}/wallet/topup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amountMT: amount, method, phone: phoneNumber })
+        });
+        if (res.ok) {
+          const dbTx = await res.json();
+          setMotoSaldo((prev) => prev + amount);
+          setTransactions((prev) => [
+            {
+              id: dbTx.txId,
+              type: dbTx.type,
+              amountMT: dbTx.amountMT,
+              method: dbTx.method,
+              description: dbTx.description,
+              timestamp: dbTx.timestamp,
+              reference: dbTx.reference
+            },
+            ...prev
+          ]);
+          return true;
+        }
+      }
+    } catch {
+      // fallback
+    }
+
+    // Fallback simulation
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     setMotoSaldo((prev) => prev + amount);
     
     const newTx: WalletTransaction = {
@@ -91,13 +181,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return true;
   };
 
-  const requestRide = (rideData: Omit<RideRequest, 'id' | 'date' | 'status'>) => {
+  const requestRide = async (rideData: Omit<RideRequest, 'id' | 'date' | 'status'>) => {
     const newRide: RideRequest = {
       ...rideData,
       id: `RIDE-${Math.floor(1000 + Math.random() * 9000)}`,
       status: 'searching',
       date: 'Agora'
     };
+
+    // Save to MongoDB if connected
+    if (isMongoConnected) {
+      try {
+        await fetch(`${API_BASE_URL}/rides`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newRide)
+        });
+      } catch (err) {
+        console.error('Error saving ride to MongoDB:', err);
+      }
+    }
+
     setCurrentRide(newRide);
 
     // If paying via wallet, deduct immediately
@@ -194,7 +298,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         driverEarningsMT,
         availableRidesForDriver,
         acceptRideAsDriver,
-        activeDriver
+        activeDriver,
+        locations,
+        restaurants,
+        isMongoConnected
       }}
     >
       {children}

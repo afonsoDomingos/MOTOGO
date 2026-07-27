@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Wallet, Tag, Bike, User } from 'lucide-react';
+import { Wallet, Tag, Bike, User, Database } from 'lucide-react';
 
 interface NavbarProps {
   onOpenWallet: () => void;
@@ -8,12 +8,12 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) => {
-  const { role, setRole, motoSaldo } = useApp();
+  const { role, setRole, motoSaldo, isMongoConnected } = useApp();
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 px-4 py-2.5 shadow-sm">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-        {/* Official Brand Logo */}
+        {/* Official Brand Logo & MongoDB Badge */}
         <div 
           className="flex items-center gap-2.5 cursor-pointer group" 
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -30,9 +30,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenWallet, onOpenHistory }) =
             </span>
           </div>
 
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 font-extrabold uppercase tracking-wider hidden sm:inline-block">
-            MOÇAMBIQUE 🇲🇿
-          </span>
+          <div className="hidden sm:flex items-center gap-1.5">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 font-extrabold uppercase tracking-wider">
+              MOÇAMBIQUE 🇲🇿
+            </span>
+
+            {isMongoConnected && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold flex items-center gap-1 shadow-sm">
+                <Database className="w-3 h-3" />
+                <span>MongoDB motogodb</span>
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Role Toggle & Wallet pill */}
